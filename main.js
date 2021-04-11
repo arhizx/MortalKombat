@@ -1,9 +1,10 @@
 class Player {
-  constructor(name, hp, img, weapon) {
+  constructor(name, hp, img, weapon, player) {
     this.name = name;
     this.hp = hp;
     this.img = img;
     this.weapon = weapon;
+    this.player = player;
   }
 
   attack() {
@@ -11,23 +12,47 @@ class Player {
   }
 }
 
-const createPlayer = (playerIndex, player) => {
-  //this looks depressing, but i can`t develop any good solution now so it is what it is :(
-  const playerDiv = document.createElement("div");
-  const progressBar = document.createElement("div");
-  const character = document.createElement("div");
-  const life = document.createElement("div");
-  const name = document.createElement("div");
-  const img = document.createElement("img");
-  const arena = document.querySelector(".arenas");
+const arena = document.querySelector(".arenas");
+const randomButton = document.querySelector(".button");
 
-  playerDiv.classList.add(`${playerIndex}`);
-  progressBar.classList.add("progressbar");
-  character.classList.add("character");
-  life.classList.add("life");
-  name.classList.add("name");
+const changeHP = (player) => {
+  const life = document.querySelector(`.player${player.player} .life`);
 
-  life.style.width = "100%";
+  player.hp = player.hp - random() > 0 ? player.hp - random() : 0;
+  life.style.width = `${player.hp}%`;
+};
+
+const checkWin = (player1, player2) => {
+  if (player1.hp > 0 && player2.hp > 0) return;
+  player1.hp > 0 && player2.hp === 0
+    ? console.log(`${player1.name} wins!`)
+    : console.log(`${player2.name} wins`);
+  randomButton.disabled = true;
+};
+
+randomButton.addEventListener("click", () => {
+  changeHP(player1);
+  changeHP(player2);
+  checkWin(player1, player2);
+});
+
+const createElement = (tagName, className) => {
+  const tag = document.createElement(tagName);
+  if (className) {
+    tag.classList.add(className);
+  }
+  return tag;
+};
+
+const createPlayer = (player) => {
+  const playerDiv = createElement("div", `player${player.player}`);
+  const progressBar = createElement("div", "progressbar");
+  const character = createElement("div", "character");
+  const life = createElement("div", "life");
+  const name = createElement("div", "name");
+  const img = createElement("img");
+
+  life.style.width = `${player.hp}%`;
 
   progressBar.appendChild(life);
   progressBar.appendChild(name);
@@ -38,22 +63,28 @@ const createPlayer = (playerIndex, player) => {
   name.innerHTML = player.name;
   img.src = player.img;
 
-  arena.appendChild(playerDiv);
+  return playerDiv;
 };
 
 const player1 = new Player(
   "Scorpion",
   100,
   "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
-  ["kunai", "fist"]
+  ["kunai", "fist"],
+  1
 );
 
 const player2 = new Player(
   "Kitana",
   100,
   "http://reactmarathon-api.herokuapp.com/assets/kitana.gif",
-  ["blade"]
+  ["blade"],
+  2
 );
 
-createPlayer("player1", player1);
-createPlayer("player2", player2);
+const random = () => {
+  return Math.ceil(Math.random() * 21);
+};
+
+arena.appendChild(createPlayer(player1));
+arena.appendChild(createPlayer(player2));
