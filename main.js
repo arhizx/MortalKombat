@@ -10,36 +10,48 @@ class Player {
   attack() {
     console.log(`${this.name} Fight`);
   }
+
+  changeHP(num) {
+    if (this.hp - num > 0) this.hp -= num;
+    else this.hp = 0;
+  }
+
+  elHP() {
+    return document.querySelector(`.player${this.player} .life`);
+  }
+
+  renderHP() {
+    this.elHP().style.width = `${this.hp}%`;
+  }
 }
 
 const arena = document.querySelector(".arenas");
 const randomButton = document.querySelector(".button");
 
-const changeHP = (player) => {
-  const life = document.querySelector(`.player${player.player} .life`);
-  let rand = random();
-  if (player.hp - rand < 0) player.hp = 0;
-  else player.hp -= rand;
-
-  life.style.width = `${player.hp}%`;
+const resultText = (name) => {
+  if (!name) return;
+  const loseTitle = createElement("div", "loseTitle");
+  loseTitle.innerText = name !== "Draw" ? `${name} wins!` : `${name}`;
+  return loseTitle;
 };
 
 const checkWin = (player1, player2) => {
-  console.log(player1.name + ":" + player1.hp, player2.name + ":" + player2.hp);
   if (player1.hp > 0 && player2.hp > 0) return;
   if (player1.hp === 0 && player2.hp === 0) {
     randomButton.disabled = true;
-    return console.log("Draw!");
+    return arena.appendChild(resultText("Draw"));
   }
   player1.hp > 0 && player2.hp === 0
-    ? console.log(`${player1.name} wins!`)
-    : console.log(`${player2.name} wins`);
+    ? arena.appendChild(resultText(player1.name))
+    : arena.appendChild(resultText(player2.name));
   randomButton.disabled = true;
 };
 
 randomButton.addEventListener("click", () => {
-  changeHP(player1);
-  changeHP(player2);
+  player1.changeHP(random(20));
+  player1.renderHP();
+  player2.changeHP(random(20));
+  player2.renderHP();
   checkWin(player1, player2);
 });
 
@@ -67,7 +79,7 @@ const createPlayer = (player) => {
   playerDiv.appendChild(progressBar);
   playerDiv.appendChild(character);
 
-  name.innerHTML = player.name;
+  name.innerText = player.name;
   img.src = player.img;
 
   return playerDiv;
@@ -89,8 +101,8 @@ const player2 = new Player(
   2
 );
 
-const random = () => {
-  return Math.ceil(Math.random() * 21);
+const random = (num) => {
+  return Math.ceil(Math.random() * num);
 };
 
 arena.appendChild(createPlayer(player1));
