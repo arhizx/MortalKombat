@@ -17,13 +17,20 @@ const randomButton = document.querySelector(".button");
 
 const changeHP = (player) => {
   const life = document.querySelector(`.player${player.player} .life`);
+  let rand = random();
+  if (player.hp - rand < 0) player.hp = 0;
+  else player.hp -= rand;
 
-  player.hp = player.hp - random() > 0 ? player.hp - random() : 0;
   life.style.width = `${player.hp}%`;
 };
 
 const checkWin = (player1, player2) => {
+  console.log(player1.name + ":" + player1.hp, player2.name + ":" + player2.hp);
   if (player1.hp > 0 && player2.hp > 0) return;
+  if (player1.hp === 0 && player2.hp === 0) {
+    randomButton.disabled = true;
+    return console.log("Draw!");
+  }
   player1.hp > 0 && player2.hp === 0
     ? console.log(`${player1.name} wins!`)
     : console.log(`${player2.name} wins`);
