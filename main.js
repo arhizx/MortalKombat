@@ -14,6 +14,7 @@ class Player {
   changeHP(num) {
     if (this.hp - num > 0) this.hp -= num;
     else this.hp = 0;
+    this.renderHP();
   }
 
   elHP() {
@@ -35,23 +36,32 @@ const resultText = (name) => {
   return loseTitle;
 };
 
+const createReloadButton = () => {
+  const reloadWrap = createElement("div", "reloadWrap");
+  const reloadButton = createElement("div", "button");
+  reloadButton.innerText = "Restart";
+  reloadWrap.appendChild(reloadButton);
+  reloadButton.addEventListener("click", () => location.reload());
+  return reloadWrap;
+};
+
 const checkWin = (player1, player2) => {
   if (player1.hp > 0 && player2.hp > 0) return;
   if (player1.hp === 0 && player2.hp === 0) {
     randomButton.disabled = true;
+    arena.appendChild(createReloadButton());
     return arena.appendChild(resultText("Draw"));
   }
   player1.hp > 0 && player2.hp === 0
     ? arena.appendChild(resultText(player1.name))
     : arena.appendChild(resultText(player2.name));
   randomButton.disabled = true;
+  arena.appendChild(createReloadButton());
 };
 
 randomButton.addEventListener("click", () => {
   player1.changeHP(random(20));
-  player1.renderHP();
   player2.changeHP(random(20));
-  player2.renderHP();
   checkWin(player1, player2);
 });
 
