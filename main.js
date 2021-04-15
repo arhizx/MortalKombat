@@ -14,7 +14,6 @@ class Player {
   changeHP(num) {
     if (this.hp - num > 0) this.hp -= num;
     else this.hp = 0;
-    this.renderHP();
   }
 
   elHP() {
@@ -27,7 +26,14 @@ class Player {
 }
 
 const arena = document.querySelector(".arenas");
-const randomButton = document.querySelector(".button");
+const controlForm = document.querySelector(".control");
+const attackButton = document.querySelector(".button");
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20,
+};
+const ATTACK = ["head", "body", "foot"];
 
 const resultText = (name) => {
   if (!name) return;
@@ -38,7 +44,7 @@ const resultText = (name) => {
 
 const createReloadButton = () => {
   const reloadWrap = createElement("div", "reloadWrap");
-  const reloadButton = createElement("div", "button");
+  const reloadButton = createElement("button", "button");
   reloadButton.innerText = "Restart";
   reloadWrap.appendChild(reloadButton);
   reloadButton.addEventListener("click", () => location.reload());
@@ -48,22 +54,16 @@ const createReloadButton = () => {
 const checkWin = (player1, player2) => {
   if (player1.hp > 0 && player2.hp > 0) return;
   if (player1.hp === 0 && player2.hp === 0) {
-    randomButton.disabled = true;
+    attackButton.disabled = true;
     arena.appendChild(createReloadButton());
     return arena.appendChild(resultText("Draw"));
   }
   player1.hp > 0 && player2.hp === 0
     ? arena.appendChild(resultText(player1.name))
     : arena.appendChild(resultText(player2.name));
-  randomButton.disabled = true;
+  attackButton.disabled = true;
   arena.appendChild(createReloadButton());
 };
-
-randomButton.addEventListener("click", () => {
-  player1.changeHP(random(20));
-  player2.changeHP(random(20));
-  checkWin(player1, player2);
-});
 
 const createElement = (tagName, className) => {
   const tag = document.createElement(tagName);
@@ -117,3 +117,39 @@ const random = (num) => {
 
 arena.appendChild(createPlayer(player1));
 arena.appendChild(createPlayer(player2));
+
+const enemyAttack = () => {
+  const hit = ATTACK[random(3) - 1];
+  const defence = ATTACK[random(3) - 1];
+
+  return {
+    value: random(HIT[hit]),
+    hit,
+    defence,
+  };
+};
+
+controlForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const enemy = enemyAttack();
+  const attacks = {};
+
+  for (let item of controlForm) {
+    if (item.checked && item.name === "hit") {
+      attacks.value = random(HIT[item.value]);
+      attacks.hit = item.value;
+    }
+    if (item.checked && item.name === "defence") {
+      attacks.defence = item.value;
+    }
+    item.checked = false;
+  }
+
+  if (attacks.defence !== enemy.hit) player1.changeHP(enemy.value);
+  if (enemy.defence !== attacks.hit) player2.changeHP(attacks.value);
+
+  player1.renderHP();
+  player2.renderHP();
+  checkWin(player1, player2);
+});
