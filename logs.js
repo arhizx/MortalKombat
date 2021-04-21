@@ -1,4 +1,6 @@
-const logs = {
+import random from "./utils.js";
+
+export const logs = {
   start:
     "Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.",
   end: [
@@ -37,4 +39,41 @@ const logs = {
     "[playerKick] обманулся и жестокий [playerDefence] блокировал удар стопой в солнечное сплетение.",
   ],
   draw: "Ничья - это тоже победа!",
+};
+
+export const generateLogs = (type, player1, player2) => {
+  const chat = document.querySelector(".chat");
+  let text = "";
+  let time = new Date().toLocaleTimeString();
+  switch (type) {
+    case "start":
+      text = logs[type]
+        .replace("[time]", time)
+        .replace("[player1]", player1.name)
+        .replace("[player2]", player2.name);
+      break;
+    case "hit":
+      text = `${time} ${logs[type][random(logs[type].length - 1)]
+        .replace("[playerKick]", player1.name)
+        .replace("[playerDefence]", player2.name)} ${player2.name} ${
+        player2.hp
+      }/100`;
+      break;
+    case "defence":
+      text = `${time} ${logs[type][random(logs[type].length - 1)]}`
+        .replace("[playerKick]", player1.name)
+        .replace("[playerDefence]", player2.name);
+      break;
+    case "draw":
+      text = logs[type];
+      break;
+    case "end":
+      text = logs[type][random(logs[type].length - 1)]
+        .replace("[playerWins]", player1.name)
+        .replace("[playerLose]", player2.name);
+      break;
+  }
+
+  const el = `<p>${text}</p>`;
+  chat.insertAdjacentHTML("afterbegin", el);
 };
