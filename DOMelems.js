@@ -10,7 +10,10 @@ export const createReloadButton = () => {
   const reloadButton = createElement("button", "button");
   reloadButton.innerText = "Restart";
   reloadWrap.appendChild(reloadButton);
-  reloadButton.addEventListener("click", () => location.reload());
+  reloadButton.addEventListener(
+    "click",
+    () => (window.location.pathname = "SelectPlayer/playerSelect.html")
+  );
   return reloadWrap;
 };
 

@@ -2,41 +2,15 @@ import random from "./utils.js";
 import { controlForm } from "/DOMaccess.js";
 
 export class Player {
-  constructor(name, hp, img, weapon, player) {
+  constructor(name, hp, img, player) {
     this.name = name;
     this.hp = hp;
     this.img = img;
-    this.weapon = weapon;
     this.player = player;
   }
 
-  static fighterIcon = () => {
-    const chars = [
-      {
-        name: "scorpion",
-        img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
-      },
-      {
-        name: "kitana",
-        img: "http://reactmarathon-api.herokuapp.com/assets/kitana.gif",
-      },
-      {
-        name: "liukang",
-        img: "http://reactmarathon-api.herokuapp.com/assets/liukang.gif",
-      },
-      {
-        name: "sonya",
-        img: "http://reactmarathon-api.herokuapp.com/assets/sonya.gif",
-      },
-      {
-        name: "subzero",
-        img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
-      },
-    ];
-    return chars[random(chars.length - 1)];
-  };
-
   changeHP = (num) => {
+    num = Number(num);
     if (this.hp - num > 0) this.hp -= num;
     else this.hp = 0;
   };
@@ -73,21 +47,16 @@ export const HIT = {
 };
 export const ATTACK = ["head", "body", "foot"];
 
-let fighterIcon1 = Player.fighterIcon();
-let fighterIcon2 = Player.fighterIcon();
-export const player1 = new Player(
-  fighterIcon1.name,
-  100,
-  fighterIcon1.img,
-  [],
-  1
-);
+let playerLoc1 = JSON.parse(localStorage.getItem("player1"));
+const { name, img, hp } = playerLoc1;
+export const player1 = new Player(name, hp, img, 1);
+
+let playerLoc2 = JSON.parse(localStorage.getItem("enemy"));
 
 export const player2 = new Player(
-  fighterIcon2.name,
-  100,
-  fighterIcon2.img,
-  [],
+  playerLoc2.name,
+  playerLoc2.hp,
+  playerLoc2.img,
   2
 );
 
