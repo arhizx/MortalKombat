@@ -6,6 +6,7 @@ import { attackButton } from "./DOMaccess.js";
 export const checkWin = (player1, player2) => {
   const { hp: hp1 } = player1;
   const { hp: hp2 } = player2;
+
   if (hp1 > 0 && hp2 > 0) return;
   if (hp1 === 0 && hp2 === 0) {
     attackButton.disabled = true;

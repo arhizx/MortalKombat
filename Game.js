@@ -8,6 +8,41 @@ import random from "./utils.js";
 export default class Game {
   constructor() {}
 
+  fetchAttack = (hit, defence) => {
+    fetch("http://reactmarathon-api.herokuapp.com/api/mk/player/fight", {
+      method: "POST",
+      body: JSON.stringify({
+        hit,
+        defence,
+      }),
+    })
+      .then((res) => res.json())
+      .then((attacks) => {
+        let {
+          player1: { hit: pHit, defence: pDefence, value: pValue },
+          player2: { hit: eHit, defence: eDefence, value: eValue },
+        } = attacks;
+
+        if (pDefence !== eHit) {
+          player1.changeHP(eValue);
+          generateLogs("hit", player2, player1);
+        }
+        if (eDefence !== pHit) {
+          player2.changeHP(pValue);
+          generateLogs("hit", player1, player2);
+        }
+        if (pHit === eDefence) {
+          generateLogs("defence", player1, player2);
+        }
+        if (eHit === pDefence) {
+          generateLogs("defence", player2, player1);
+        }
+        player1.renderHP();
+        player2.renderHP();
+        checkWin(player1, player2);
+      });
+  };
+
   createArena = () => {
     const arenas = ["arena1", "arena2", "arena3", "arena4", "arena5"];
     arena.classList.add(arenas[random(arenas.length - 1)]);
@@ -40,26 +75,10 @@ export default class Game {
 
     const enemy = player2.attack();
     const attacks = player1.attack();
-    const { hit: eHit, defence: eDefence, value: eValue } = enemy;
-    const { hit: pHit, defence: pDefence, value: pValue } = attacks;
-    if (pDefence !== eHit) {
-      player1.changeHP(eValue);
-      generateLogs("hit", player2, player1);
-    }
-    if (eDefence !== pHit) {
-      player2.changeHP(pValue);
-      generateLogs("hit", player1, player2);
-    }
-    if (pHit === eDefence) {
-      generateLogs("defence", player1, player2);
-    }
-    if (eHit === pDefence) {
-      generateLogs("defence", player2, player1);
-    }
-
-    player1.renderHP();
-    player2.renderHP();
-    checkWin(player1, player2);
+    const { hit: eHit, defence: eDefence } = enemy;
+    const { hit: pHit, defence: pDefence } = attacks;
+    this.fetchAttack(eHit, pDefence);
+    this.fetchAttack(pHit, eDefence);
   };
 
   start = () => {
