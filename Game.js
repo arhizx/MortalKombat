@@ -8,39 +8,45 @@ import random from "./utils.js";
 export default class Game {
   constructor() {}
 
-  fetchAttack = (hit, defence) => {
-    fetch("http://reactmarathon-api.herokuapp.com/api/mk/player/fight", {
-      method: "POST",
-      body: JSON.stringify({
-        hit,
-        defence,
-      }),
-    })
-      .then((res) => res.json())
-      .then((attacks) => {
-        let {
-          player1: { hit: pHit, defence: pDefence, value: pValue },
-          player2: { hit: eHit, defence: eDefence, value: eValue },
-        } = attacks;
+  fetchAttack = async (hit, defence) => {
+    let data = await fetch(
+      "http://reactmarathon-api.herokuapp.com/api/mk/player/fight",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          hit,
+          defence,
+        }),
+      }
+    );
+    let res = await data.json();
+    return res;
+  };
 
-        if (pDefence !== eHit) {
-          player1.changeHP(eValue);
-          generateLogs("hit", player2, player1);
-        }
-        if (eDefence !== pHit) {
-          player2.changeHP(pValue);
-          generateLogs("hit", player1, player2);
-        }
-        if (pHit === eDefence) {
-          generateLogs("defence", player1, player2);
-        }
-        if (eHit === pDefence) {
-          generateLogs("defence", player2, player1);
-        }
+  compareAttacks = (attacks) => {
+    let {
+      player1: { hit: pHit, defence: pDefence, value: pValue },
+      player2: { hit: eHit, defence: eDefence, value: eValue },
+    } = attacks;
+
+    switch (true) {
+      case pDefence !== eHit:
+        player1.changeHP(eValue);
         player1.renderHP();
+        generateLogs("hit", player2, player1);
+        break;
+      case eDefence !== pHit:
+        player2.changeHP(pValue);
         player2.renderHP();
-        checkWin(player1, player2);
-      });
+        generateLogs("hit", player1, player2);
+        break;
+      case pHit === eDefence:
+        generateLogs("defence", player1, player2);
+        break;
+      case eHit === pDefence:
+        generateLogs("defence", player2, player1);
+        break;
+    }
   };
 
   createArena = () => {
@@ -70,15 +76,16 @@ export default class Game {
     return playerDiv;
   };
 
-  gameWatcher = (e) => {
+  gameWatcher = async (e) => {
     e.preventDefault();
 
     const enemy = player2.attack();
     const attacks = player1.attack();
     const { hit: eHit, defence: eDefence } = enemy;
     const { hit: pHit, defence: pDefence } = attacks;
-    this.fetchAttack(eHit, pDefence);
-    this.fetchAttack(pHit, eDefence);
+    this.compareAttacks(await this.fetchAttack(eHit, pDefence));
+    this.compareAttacks(await this.fetchAttack(pHit, eDefence));
+    checkWin(player1, player2);
   };
 
   start = () => {
