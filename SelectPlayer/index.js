@@ -59,10 +59,6 @@ async function init() {
     });
 
     el.addEventListener("click", () => {
-      //TODO: Мы кладем нашего игрока в localStorage что бы потом на арене его достать.
-      // При помощи localStorage.getItem('player1'); т.к. в localStorage кладется строка,
-      // то мы должны ее распарсить обратным методом JSON.parse(localStorage.getItem('player1'));
-      // но это уже будет в нашем классе Game когда мы инициализируем игроков.
       $parent.classList.add("disabledChoose");
       let enemyImg = createElement("img", "img");
       enemyImg.src = enemy.img;
