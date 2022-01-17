@@ -12,7 +12,7 @@ export const createReloadButton = () => {
   reloadWrap.appendChild(reloadButton);
   reloadButton.addEventListener(
     "click",
-    () => (window.location.pathname = "SelectPlayer/playerSelect.html")
+    () => (window.location.pathname = "SelectPlayer/index.html")
   );
   return reloadWrap;
 };

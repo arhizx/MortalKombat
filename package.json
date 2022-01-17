@@ -1,0 +1,19 @@
+{
+  "name": "mortalkombat",
+  "version": "1.0.0",
+  "description": "mk game",
+  "main": "SelectPlayer/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arhizx/MortalKombat.git"
+  },
+  "author": "Misha Glass",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arhizx/MortalKombat/issues"
+  },
+  "homepage": "https://github.com/arhizx/MortalKombat#readme"
+}

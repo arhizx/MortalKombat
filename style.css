@@ -20,6 +20,7 @@
 html {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body {
@@ -171,7 +172,7 @@ body {
 
 .chat {
   width: 786px;
-  height: 30vh;
+  height: 40vh;
   background-image: url(./assets/versus.png);
   background-size: cover;
   background-position: center;
